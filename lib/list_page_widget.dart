@@ -9,6 +9,8 @@ import 'package:products_newest/VoteBloc.dart';
 import 'package:products_newest/VoteCounter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'SortingBloc.dart';
+
 class ListPageWidget extends StatefulWidget{
   const ListPageWidget(Key? key) : super(key : key);
 
@@ -23,7 +25,6 @@ class _ListPageWidgetState extends State<ListPageWidget> {
 
   final productTypeRepository = ProductTypeRepository();
   Future<List<ProductType>>? listreqProductType;
-//TODO
   ProductType? selectedCategory;
   @override
   void initState(){
@@ -57,8 +58,8 @@ class _ListPageWidgetState extends State<ListPageWidget> {
                   },
                   items: categories.map((category) {
                     return DropdownMenuItem<ProductType>(
-                      value: category, // ProductType.name beállítása értékként
-                      child: Text(category.name), // ProductType.name beállítása címkének
+                      value: category,
+                      child: Text(category.name),
                     );
                   }).toList(),
                 );
@@ -79,11 +80,14 @@ class _ListPageWidgetState extends State<ListPageWidget> {
                 isTopUpvotedListVisible = !isTopUpvotedListVisible;
               });
             },
-            child: const Padding(
+            child:
+            const Padding(
               padding:  EdgeInsets.all(8.0),
-              child: Text(
+              child:
+              Text(
                 'Top Upvoted Products',
-                style: TextStyle(
+                style:
+                TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
                   color: Colors.blue,
@@ -170,11 +174,21 @@ class _ListPageWidgetState extends State<ListPageWidget> {
   }
 }
 
-class TopUpvotedProductsList extends StatelessWidget {
-  final ProductRepository productRepository = ProductRepository();
+class TopUpvotedProductsList extends StatefulWidget {
+  const TopUpvotedProductsList({Key? key}) : super(key: key);
 
-  TopUpvotedProductsList({super.key});
+  @override
+  TopUpvotedProductsListState createState() => TopUpvotedProductsListState();
+}
 
+
+class TopUpvotedProductsListState extends State<TopUpvotedProductsList> {
+  late SortingBloc _sortingBloc;
+  @override
+  void initState() {
+    _sortingBloc = SortingBloc();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -191,37 +205,33 @@ class TopUpvotedProductsList extends StatelessWidget {
             'Top Upvoted Products:',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
+
           const SizedBox(height: 16.0),
-          Expanded(
-            child: SingleChildScrollView( // Add a SingleChildScrollView here
-              child: FutureBuilder<List<Product>>(
-                future: productRepository.getProducts(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    List<Product> products = snapshot.data!;
-                    products.sort((a, b) => b.voteBloc.votecounter.upvote.compareTo(a.voteBloc.votecounter.upvote));
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: products.length,
-                      itemBuilder: (context, index) {
-                        final product = products[index];
-                        return ListTile(
-                          leading: Image.network(product.thumbnail),
-                          title: Text(product.title),
-                          subtitle: Text('Upvotes: ${product.voteBloc.votecounter.upvote}'),
-                        );
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    return CircularProgressIndicator();
-                  }
+      Expanded(
+        child: StreamBuilder<List<Product>>(
+          stream: _sortingBloc.sortedProductsStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final sortedProducts = snapshot.data!;
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: sortedProducts.length,
+                itemBuilder: (context, index) {
+                  final product = sortedProducts[index];
+                  return ListTile(
+                    leading: Image.network(product.thumbnail),
+                    title: Text(product.title),
+                    subtitle: Text('Upvotes: ${product.voteBloc.votecounter.upvote}'),
+                  );
                 },
-              ),
-            ),
-          ),
+              );
+            } else {
+              return const CircularProgressIndicator();
+            }
+          },
+        ),
+      ),
         ],
       ),
     );

@@ -25,22 +25,15 @@
     }
 
     void increaseUpvote() async{
-    //  if(!votecounter.hasvoted) {
         votecounter.increaseUpvote();
-      //  votecounter.hasvoted = true;
         _voteController.add(votecounter);
         _saveVoteCounter();
-    //  }
     }
 
     void increaseDownvote() async {
-      //if(!votecounter.hasvoted) {
-        //votecounter.downvote = (prefs.getInt('downvote') ?? 0) + 1;
         votecounter.increaseDownvote();
-       // votecounter.hasvoted= true;
         _voteController.add(votecounter);
         _saveVoteCounter();
-    //  }
     }
     Future<void> _loadVoteCounter() async {
 
