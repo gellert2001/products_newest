@@ -49,7 +49,7 @@ class Product {
       category: json['category'],
       thumbnail: json['thumbnail'],
       images: List<String>.from(json['images']),
-      voteBloc: VoteBloc(VoteCounter(0,0)),
+      voteBloc: VoteBloc(VoteCounter(0,0),json['id']),
     );
   }
 

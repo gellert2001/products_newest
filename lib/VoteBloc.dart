@@ -9,8 +9,10 @@
     final _voteController = StreamController<VoteCounter>.broadcast();
     Stream<VoteCounter> get voteStream => _voteController.stream;
     late SharedPreferences prefs;
+    int id;
 
-    VoteBloc(this.votecounter);
+
+    VoteBloc(this.votecounter,this.id);
 
     void initializeVoteCounter(VoteCounter voteCounter) async {
       WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +20,7 @@
       votecounter = voteCounter;
 
       await _loadVoteCounter();
+
       _voteController.add(votecounter);
     }
 
@@ -41,8 +44,8 @@
     }
     Future<void> _loadVoteCounter() async {
 
-      int upvote = (prefs.getInt('upvote') ?? 0);
-      int downvote = (prefs.getInt('downvote') ?? 0);
+      final upvote = (prefs.getInt('upvote_$id') ?? 0);
+      final downvote = (prefs.getInt('downvote_$id') ?? 0);
       votecounter = VoteCounter(upvote,downvote);
       if (kDebugMode) {
         print('Az adatok sikeresen betöltve: upvote=${votecounter.upvote}, downvote=${votecounter.downvote}');
@@ -51,10 +54,10 @@
 
     Future<void> _saveVoteCounter() async {
       try {
-        await prefs.setInt('upvote', votecounter.upvote);
-        await prefs.setInt('downvote', votecounter.downvote);
+        await prefs.setInt('upvote_$id', votecounter.upvote);
+        await prefs.setInt('downvote_$id', votecounter.downvote);
         if (kDebugMode) {
-          print('Az adatok sikeresen lementve: upvote=${votecounter.upvote}, downvote=${votecounter.downvote}');
+          print('Az adatok sikeresen lementve: upvote=${votecounter.upvote},$id, downvote=${votecounter.downvote}');
         }
       } catch (error) {
         if (kDebugMode) {

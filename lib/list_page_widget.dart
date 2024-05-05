@@ -170,120 +170,6 @@ class _ListPageWidgetState extends State<ListPageWidget> {
   }
 }
 
-/*
-class TopUpvotedProductsList extends StatelessWidget {
-  final ProductRepository productRepository = ProductRepository();
-
-  TopUpvotedProductsList({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<Product>>(
-      future: productRepository.getProducts(), // Termékek lekérése
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          // Adatok sikeresen lekérve
-          List<Product> products = snapshot.data!;
-
-          // Termékek rendezése upvote-ok szerint csökkenő sorrendben
-          products.sort((a, b) => b.voteBloc.votecounter.upvote.compareTo(a.voteBloc.votecounter.upvote));
-
-          // A rendezett termékek megjelenítése
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'Top Upvoted Products:',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: products.length,
-                itemBuilder: (context, index) {
-                  final product = products[index];
-                  return ListTile(
-                    leading: Image.network(product.thumbnail),
-                    title: Text(product.title),
-                    subtitle: Text('Upvotes: ${product.voteBloc.votecounter.upvote}'),
-                  );
-                },
-              ),
-            ],
-          );
-        } else if (snapshot.hasError) {
-          // Hiba esetén
-          return Text('Error: ${snapshot.error}');
-        } else {
-          // Adatok betöltése folyamatban
-          return const CircularProgressIndicator();
-        }
-      },
-    );
-  }
-}
-
-
-class TopUpvotedProductsList extends StatelessWidget {
-  final ProductRepository productRepository = ProductRepository();
-
-  TopUpvotedProductsList({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin:const EdgeInsets.symmetric(vertical: 16.0),
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(16.0),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Top Upvoted Products:',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16.0),
-          FutureBuilder<List<Product>>(
-            future: productRepository.getProducts(), // Termékek lekérése
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                // Adatok sikeresen lekérve
-                List<Product> products = snapshot.data!;
-
-                // Termékek rendezése upvote-ok szerint csökkenő sorrendben
-                products.sort((a, b) => b.voteBloc.votecounter.upvote.compareTo(a.voteBloc.votecounter.upvote));
-
-                // A rendezett termékek megjelenítése
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    final product = products[index];
-                    return ListTile(
-                      leading: Image.network(product.thumbnail),
-                      title: Text(product.title),
-                      subtitle: Text('Upvotes: ${product.voteBloc.votecounter.upvote}'),
-                    );
-                  },
-                );
-              } else if (snapshot.hasError) {
-                // Hiba esetén
-                return Text('Error: ${snapshot.error}');
-              } else {
-                // Adatok betöltése folyamatban
-                return const CircularProgressIndicator();
-              }
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-*/
 class TopUpvotedProductsList extends StatelessWidget {
   final ProductRepository productRepository = ProductRepository();
 
@@ -358,7 +244,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>  {
   @override
   void initState() {
     super.initState();
-    _voteBloc = VoteBloc(widget.product.voteBloc.votecounter);
+    _voteBloc = VoteBloc(widget.product.voteBloc.votecounter,widget.product.voteBloc.id);
     _voteBloc.initializeVoteCounter(widget.product.voteBloc.votecounter);
   }
   @override
